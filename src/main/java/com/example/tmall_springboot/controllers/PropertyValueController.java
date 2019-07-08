@@ -28,7 +28,6 @@ public class PropertyValueController {
 
     @PutMapping("/propertyValues")
     public PropertyValue update(@RequestBody PropertyValue propertyValue) {
-        System.out.println(propertyValue);
         return propertyValueService.update(propertyValue);
     }
 }
