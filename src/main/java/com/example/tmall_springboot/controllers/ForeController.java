@@ -3,6 +3,8 @@ package com.example.tmall_springboot.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 public class ForeController {
 
@@ -71,7 +73,8 @@ public class ForeController {
         return "fore/search";
     }
     @GetMapping("/forelogout")
-    public String logout() {
+    public String logout(HttpSession session) {
+        session.removeAttribute("user");
         return "redirect:home";
     }
 }
