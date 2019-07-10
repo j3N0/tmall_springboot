@@ -40,4 +40,9 @@ public class UserJpaService implements UserService {
     public User add(User user) {
         return userRepository.save(user);
     }
+
+    @Override
+    public User get(String name, String password) {
+        return userRepository.getByNameAndPassword(name, password);
+    }
 }

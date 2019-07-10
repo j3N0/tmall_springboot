@@ -9,4 +9,6 @@ public interface UserService extends PageService<User> {
     User getByName(String name);
 
     User add(User user);
+
+    User get(String name, String password);
 }
