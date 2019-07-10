@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -29,6 +30,18 @@ public class Product {
 
     @Transient
     private ProductImage firstProductImage;
+
+    @Transient
+    private List<ProductImage> productSingleImages;
+
+    @Transient
+    private List<ProductImage> productDetailImages;
+
+    @Transient
+    private int reviewCount;
+
+    @Transient
+    private int saleCount;
 
     @ManyToOne
     @JoinColumn(name = "cid")
