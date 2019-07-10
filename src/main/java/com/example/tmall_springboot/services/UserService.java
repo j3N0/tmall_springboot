@@ -8,5 +8,5 @@ public interface UserService extends PageService<User> {
 
     User getByName(String name);
 
-    void add(User user);
+    User add(User user);
 }

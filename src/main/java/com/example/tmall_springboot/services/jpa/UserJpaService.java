@@ -25,4 +25,19 @@ public class UserJpaService implements UserService {
         Pageable pageable = new PageRequest(start, size,sort);
         return userRepository.findAll(pageable);
     }
+
+    @Override
+    public boolean isExist(String name) {
+        return userRepository.findByName(name) != null;
+    }
+
+    @Override
+    public User getByName(String name) {
+        return userRepository.findByName(name);
+    }
+
+    @Override
+    public User add(User user) {
+        return userRepository.save(user);
+    }
 }
