@@ -80,6 +80,6 @@ public class OrderItemJpaService implements OrderItemService {
 
     @Override
     public List<OrderItem> listByProduct(Product product) {
-        return null;
+        return orderItemRepository.findByProduct(product);
     }
 }
