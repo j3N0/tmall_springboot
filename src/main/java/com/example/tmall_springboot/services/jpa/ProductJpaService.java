@@ -4,8 +4,10 @@ import com.example.tmall_springboot.domains.Category;
 import com.example.tmall_springboot.domains.Product;
 import com.example.tmall_springboot.repositories.CategoryRepository;
 import com.example.tmall_springboot.repositories.ProductRepository;
+import com.example.tmall_springboot.services.OrderItemService;
 import com.example.tmall_springboot.services.ProductImageService;
 import com.example.tmall_springboot.services.ProductService;
+import com.example.tmall_springboot.services.ReviewService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +24,15 @@ public class ProductJpaService implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ProductImageService productImageService;
+    private final OrderItemService orderItemService;
+    private final ReviewService reviewService;
 
-    public ProductJpaService(ProductRepository productRepository, CategoryRepository categoryRepository, ProductImageService productImageService) {
+    public ProductJpaService(ProductRepository productRepository, CategoryRepository categoryRepository, ProductImageService productImageService, OrderItemService orderItemService, ReviewService reviewService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.productImageService = productImageService;
+        this.orderItemService = orderItemService;
+        this.reviewService = reviewService;
     }
 
     @Override
@@ -106,5 +112,18 @@ public class ProductJpaService implements ProductService {
         Category category = categoryRepository.getOne(key);
 
         return productRepository.findByCategory(category, pageable);
+    }
+
+    @Override
+    public void setSaleAndReviewNumber(List<Product> products) {
+        products.forEach(this::setSaleAndReviewNumber);
+    }
+
+    @Override
+    public void setSaleAndReviewNumber(Product product) {
+        int saleCount = orderItemService.getSaleCount(product);
+        product.setSaleCount(saleCount);
+        int reviewCount = reviewService.getCount(product);
+        product.setReviewCount(reviewCount);
     }
 }

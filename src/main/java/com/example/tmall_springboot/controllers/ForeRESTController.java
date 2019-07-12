@@ -1,30 +1,32 @@
 package com.example.tmall_springboot.controllers;
 
-import com.example.tmall_springboot.domains.Category;
-import com.example.tmall_springboot.domains.User;
-import com.example.tmall_springboot.services.CategoryService;
-import com.example.tmall_springboot.services.ProductService;
-import com.example.tmall_springboot.services.UserService;
+import com.example.tmall_springboot.domains.*;
+import com.example.tmall_springboot.services.*;
 import com.example.tmall_springboot.utils.Result;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ForeRESTController {
 
     private final CategoryService categoryService;
     private final ProductService productService;
+    private final ProductImageService productImageService;
+    private final PropertyValueService propertyValueService;
+    private final ReviewService reviewService;
     private final UserService userService;
 
-    public ForeRESTController(CategoryService categoryService, ProductService productService, UserService userService) {
+    public ForeRESTController(CategoryService categoryService, ProductService productService, ProductImageService productImageService, PropertyValueService propertyValueService, ReviewService reviewService, UserService userService) {
         this.categoryService = categoryService;
         this.productService = productService;
+        this.productImageService = productImageService;
+        this.propertyValueService = propertyValueService;
+        this.reviewService = reviewService;
         this.userService = userService;
     }
 
@@ -69,6 +71,28 @@ public class ForeRESTController {
 
         session.setAttribute("user", user);
         return Result.success();
+    }
+
+    @GetMapping("/foreproduct/{pid}")
+    public Result product(@PathVariable Long pid) {
+        Product product = productService.get(pid);
+
+        List<ProductImage> productSingleImages = productImageService.listProductImages(product, productImageService.TYPE_SINGLE);
+        List<ProductImage> productDetailImages = productImageService.listProductImages(product, productImageService.TYPE_DETAIL);
+        product.setProductSingleImages(productSingleImages);
+        product.setProductDetailImages(productDetailImages);
+
+        List<PropertyValue> propertyValues = propertyValueService.list(product);
+        List<Review> reviews = reviewService.list(product);
+        productService.setSaleAndReviewNumber(product);
+        productImageService.setFirstProductImage(product);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("product", product);
+        map.put("pvs", propertyValues);
+        map.put("reviews", reviews);
+
+        return Result.success(map);
     }
 
 }

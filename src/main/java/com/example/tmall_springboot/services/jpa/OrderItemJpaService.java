@@ -2,6 +2,7 @@ package com.example.tmall_springboot.services.jpa;
 
 import com.example.tmall_springboot.domains.Order;
 import com.example.tmall_springboot.domains.OrderItem;
+import com.example.tmall_springboot.domains.Product;
 import com.example.tmall_springboot.repositories.OrderItemRepository;
 import com.example.tmall_springboot.services.OrderItemService;
 import com.example.tmall_springboot.services.ProductImageService;
@@ -42,7 +43,43 @@ public class OrderItemJpaService implements OrderItemService {
     }
 
     @Override
+    public OrderItem update(OrderItem orderItem) {
+        return orderItemRepository.save(orderItem);
+    }
+
+    @Override
+    public OrderItem add(OrderItem orderItem) {
+        return orderItemRepository.save(orderItem);
+    }
+
+    @Override
+    public OrderItem get(Long id) {
+        return orderItemRepository.getOne(id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        orderItemRepository.deleteById(id);
+    }
+
+    @Override
+    public Integer getSaleCount(Product product) {
+
+        return listByProduct(product).stream()
+                .filter(orderItem -> orderItem.getOrder() != null)
+                .filter(orderItem -> orderItem.getOrder().getPayDate() != null)
+                .map(OrderItem::getNumber)
+                .reduce(0, Integer::sum);
+
+    }
+
+    @Override
     public List<OrderItem> listByOrder(Order order) {
         return orderItemRepository.findByOrderOrderByIdDesc(order);
+    }
+
+    @Override
+    public List<OrderItem> listByProduct(Product product) {
+        return null;
     }
 }

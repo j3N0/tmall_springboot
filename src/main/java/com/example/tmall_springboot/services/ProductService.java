@@ -24,4 +24,8 @@ public interface ProductService extends PageKeyService<Product> {
     void fill(Category category);
 
     void fillByRow(List<Category> categories);
+
+    void setSaleAndReviewNumber(List<Product> products);
+
+    void setSaleAndReviewNumber(Product product);
 }
