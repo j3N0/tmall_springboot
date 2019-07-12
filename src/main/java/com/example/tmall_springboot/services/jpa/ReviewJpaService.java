@@ -3,7 +3,6 @@ package com.example.tmall_springboot.services.jpa;
 import com.example.tmall_springboot.domains.Product;
 import com.example.tmall_springboot.domains.Review;
 import com.example.tmall_springboot.repositories.ReviewRepository;
-import com.example.tmall_springboot.services.ProductService;
 import com.example.tmall_springboot.services.ReviewService;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +12,9 @@ import java.util.List;
 public class ReviewJpaService implements ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final ProductService productService;
 
-    public ReviewJpaService(ReviewRepository reviewRepository, ProductService productService) {
+    public ReviewJpaService(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
-        this.productService = productService;
     }
 
     @Override
