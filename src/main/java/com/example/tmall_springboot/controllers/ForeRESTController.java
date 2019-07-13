@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class ForeRESTController {
@@ -100,6 +98,39 @@ public class ForeRESTController {
         User user = (User) session.getAttribute("user");        //ToDo Optional
         if (null != user) { return Result.success(); }
         return Result.fail("未登录");
+    }
+
+    @GetMapping("forecategory/{cid}")
+    public Object category(@PathVariable Long cid, String sort) {
+        Category c = categoryService.get(cid);
+        productService.fill(c);
+        productService.setSaleAndReviewNumber(c.getProducts());
+        categoryService.removeCategoryFromProduct(c);
+
+        if (null  != sort) {
+            switch (sort) {
+                case "review":
+                    Collections.sort(c.getProducts(), (p1, p2) -> p2.getReviewCount() - p1.getReviewCount());
+                    break;
+                case "date" :
+                    Collections.sort(c.getProducts(), Comparator.comparing(Product::getCreateDate));
+                    break;
+
+                case "saleCount" :
+                    Collections.sort(c.getProducts(), (p1, p2) -> p2.getSaleCount() - p1.getSaleCount());
+                    break;
+
+                case "price":
+                    Collections.sort(c.getProducts(), (p1, p2) -> (int) (p1.getPromotePrice() - p2.getPromotePrice()));
+                    break;
+
+                case "all":
+                    Collections.sort(c.getProducts(), (p1, p2) -> p2.getReviewCount() * p2.getSaleCount() - p1.getReviewCount() * p1.getSaleCount());
+                    break;
+            }
+        }
+
+        return c;
     }
 
 }
