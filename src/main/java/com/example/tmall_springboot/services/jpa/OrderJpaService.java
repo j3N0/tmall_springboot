@@ -1,7 +1,6 @@
 package com.example.tmall_springboot.services.jpa;
 
 import com.example.tmall_springboot.domains.Order;
-import com.example.tmall_springboot.domains.OrderItem;
 import com.example.tmall_springboot.repositories.OrderRepository;
 import com.example.tmall_springboot.services.OrderService;
 import org.springframework.data.domain.Page;
@@ -27,8 +26,7 @@ public class OrderJpaService implements OrderService {
     }
 
     private void removeOrderFromOrderItem(Order order) {
-        List<OrderItem> orderItems = order.getOrderItems();
-        orderItems.forEach(orderItem -> orderItem.setOrder(null));
+        order.getOrderItems().forEach(orderItem -> orderItem.setOrder(null));
     }
 
     @Override

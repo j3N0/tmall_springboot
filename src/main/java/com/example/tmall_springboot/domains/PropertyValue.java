@@ -2,6 +2,7 @@ package com.example.tmall_springboot.domains;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,6 +23,15 @@ public class PropertyValue {
     @ManyToOne
     @JoinColumn(name = "ptid")
     private Property property;
+
+    @Builder
+    public PropertyValue() {}
+
+    @Builder
+    public PropertyValue(Product product, Property property) {
+        this.product = product;
+        this.property = property;
+    }
 
     private String value;
 }

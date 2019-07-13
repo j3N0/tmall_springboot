@@ -28,17 +28,12 @@ public class PropertyValueJpaService implements PropertyValueService {
 
     @Override
     public void init(Product product) {
+
         propertyRepository.findByCategory(product.getCategory())
-                .forEach(property -> {
-                    PropertyValue propertyValue = getByPropertyAndProduct(product, property);
-                    if (null == propertyValue) {
-                        propertyValue = new PropertyValue();
-                        propertyValue.setProduct(product);
-                        propertyValue.setProperty(property);
-                        propertyValueRepository.save(propertyValue);
-                    }
-                });
-        //TODO refactor a better way
+                .stream()
+                .filter(property -> getByPropertyAndProduct(product, property) == null)
+                .map(property -> PropertyValue.builder().product(product).property(property).build())
+                .forEach(propertyValueRepository::save);
     }
 
     @Override
