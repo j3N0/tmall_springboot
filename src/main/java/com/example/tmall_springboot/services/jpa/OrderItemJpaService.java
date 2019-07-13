@@ -66,8 +66,7 @@ public class OrderItemJpaService implements OrderItemService {
     public Integer getSaleCount(Product product) {
 
         return listByProduct(product).stream()
-                .filter(orderItem -> orderItem.getOrder() != null)
-                .filter(orderItem -> orderItem.getOrder().getPayDate() != null)
+                .filter(orderItem -> orderItem.getOrder() != null && orderItem.getOrder().getPayDate() != null)
                 .map(OrderItem::getNumber)
                 .reduce(0, Integer::sum);
 
