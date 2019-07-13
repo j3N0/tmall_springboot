@@ -28,4 +28,6 @@ public interface ProductService extends PageKeyService<Product> {
     void setSaleAndReviewNumber(List<Product> products);
 
     void setSaleAndReviewNumber(Product product);
+
+    List<Product> search(String keyword, int start, int size);
 }

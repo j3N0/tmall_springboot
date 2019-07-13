@@ -9,6 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
     Page<Product> findByCategory(Category category, Pageable pageable);
+
     List<Product> findByCategoryOrderById(Category category);
+
+    List<Product> findByNameLike(String keyword, Pageable pageable);
 }
