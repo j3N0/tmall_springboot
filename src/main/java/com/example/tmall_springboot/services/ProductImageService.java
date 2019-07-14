@@ -1,5 +1,6 @@
 package com.example.tmall_springboot.services;
 
+import com.example.tmall_springboot.domains.OrderItem;
 import com.example.tmall_springboot.domains.Product;
 import com.example.tmall_springboot.domains.ProductImage;
 
@@ -21,4 +22,6 @@ public interface ProductImageService {
     void setFirstProductImage(Product product);
 
     void setFirstProductImages(List<Product> products);
+
+    void setFirstProductImagesOnOrderItems(List<OrderItem> orderItems);
 }

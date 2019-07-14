@@ -1,6 +1,7 @@
 package com.example.tmall_springboot.services.jpa;
 
 
+import com.example.tmall_springboot.domains.OrderItem;
 import com.example.tmall_springboot.domains.Product;
 import com.example.tmall_springboot.domains.ProductImage;
 import com.example.tmall_springboot.repositories.ProductImageRepository;
@@ -53,5 +54,10 @@ public class ProductImageJpaService implements ProductImageService {
     @Override
     public void setFirstProductImages(List<Product> products) {
         products.forEach(this::setFirstProductImage);
+    }
+
+    @Override
+    public void setFirstProductImagesOnOrderItems(List<OrderItem> orderItems) {
+        orderItems.stream().map(OrderItem::getProduct).forEach(this::setFirstProductImage);
     }
 }

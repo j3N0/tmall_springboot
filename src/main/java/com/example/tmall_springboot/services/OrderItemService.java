@@ -3,6 +3,7 @@ package com.example.tmall_springboot.services;
 import com.example.tmall_springboot.domains.Order;
 import com.example.tmall_springboot.domains.OrderItem;
 import com.example.tmall_springboot.domains.Product;
+import com.example.tmall_springboot.domains.User;
 
 import java.util.List;
 
@@ -26,4 +27,5 @@ public interface OrderItemService {
 
     List<OrderItem> listByProduct(Product product);
 
+    List<OrderItem> listByUser(User user);
 }

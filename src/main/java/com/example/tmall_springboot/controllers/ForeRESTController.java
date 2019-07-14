@@ -12,19 +12,22 @@ import java.util.*;
 @RestController
 public class ForeRESTController {
 
+    //Todo Refactoring God Class
     private final CategoryService categoryService;
     private final ProductService productService;
     private final ProductImageService productImageService;
     private final PropertyValueService propertyValueService;
     private final ReviewService reviewService;
+    private final OrderItemService orderItemService;
     private final UserService userService;
 
-    public ForeRESTController(CategoryService categoryService, ProductService productService, ProductImageService productImageService, PropertyValueService propertyValueService, ReviewService reviewService, UserService userService) {
+    public ForeRESTController(CategoryService categoryService, ProductService productService, ProductImageService productImageService, PropertyValueService propertyValueService, ReviewService reviewService, OrderItemService orderItemService, UserService userService) {
         this.categoryService = categoryService;
         this.productService = productService;
         this.productImageService = productImageService;
         this.propertyValueService = propertyValueService;
         this.reviewService = reviewService;
+        this.orderItemService = orderItemService;
         this.userService = userService;
     }
 
@@ -141,5 +144,58 @@ public class ForeRESTController {
         productService.setSaleAndReviewNumber(products);
         return products;
     }
+
+    @GetMapping("forebuyone")
+    public Object buyOne(Long pid, int num, HttpSession session) {
+        return buyOneAndAddCart(pid, num, session);
+    }
+
+    private Long buyOneAndAddCart(Long pid, int num, HttpSession session) {
+        Product product = productService.get(pid);
+        User user = (User) session.getAttribute("user");
+        List<OrderItem> ois = orderItemService.listByUser(user);
+
+        Optional<OrderItem> optionalOrderItem = orderItemService.listByUser(user)
+                .stream()
+                .filter(orderItem -> orderItem.getProduct().getId().equals(product.getId()))
+                .findFirst();
+
+        if (optionalOrderItem.isPresent()) {
+
+            OrderItem orderItem = optionalOrderItem.get();
+            orderItem.setNumber(orderItem.getNumber() + num);
+            orderItemService.update(orderItem);
+            return orderItem.getId();
+        } else {
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setUser(user);
+            orderItem.setProduct(product);
+            orderItem.setNumber(num);
+            OrderItem savedOrderItem = orderItemService.add(orderItem);
+            return savedOrderItem.getId();
+        }
+    }
+
+    @GetMapping("forebuy")
+    public Object buy(String[] oiid, HttpSession session) {
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        Float total = Arrays.stream(oiid)
+                .map(id -> orderItemService.get(Long.parseLong(id)))
+                .peek(orderItems::add)
+                .map(orderItem -> orderItem.getProduct().getPromotePrice() * orderItem.getNumber())
+                .reduce(0f, Float::sum);
+
+        productImageService.setFirstProductImagesOnOrderItems(orderItems);
+
+        session.setAttribute("ois", orderItems);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderItems", orderItems);
+        map.put("total", total);
+        return Result.success(map);
+    }
+
 
 }

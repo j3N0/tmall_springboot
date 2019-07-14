@@ -3,6 +3,7 @@ package com.example.tmall_springboot.services.jpa;
 import com.example.tmall_springboot.domains.Order;
 import com.example.tmall_springboot.domains.OrderItem;
 import com.example.tmall_springboot.domains.Product;
+import com.example.tmall_springboot.domains.User;
 import com.example.tmall_springboot.repositories.OrderItemRepository;
 import com.example.tmall_springboot.services.OrderItemService;
 import com.example.tmall_springboot.services.ProductImageService;
@@ -80,5 +81,10 @@ public class OrderItemJpaService implements OrderItemService {
     @Override
     public List<OrderItem> listByProduct(Product product) {
         return orderItemRepository.findByProduct(product);
+    }
+
+    @Override
+    public List<OrderItem> listByUser(User user) {
+        return orderItemRepository.findByUserAndOrderIsNull(user);
     }
 }
