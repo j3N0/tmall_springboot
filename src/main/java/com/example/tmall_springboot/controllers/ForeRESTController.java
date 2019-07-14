@@ -150,6 +150,12 @@ public class ForeRESTController {
         return buyOneAndAddCart(pid, num, session);
     }
 
+    @GetMapping("foreaddCart")
+    public Object addCart(Long pid, int num, HttpSession session) {
+        buyOneAndAddCart(pid, num, session);
+        return Result.success();
+    }
+
     private Long buyOneAndAddCart(Long pid, int num, HttpSession session) {
         Product product = productService.get(pid);
         User user = (User) session.getAttribute("user");
