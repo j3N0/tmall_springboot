@@ -159,7 +159,6 @@ public class ForeRESTController {
     private Long buyOneAndAddCart(Long pid, int num, HttpSession session) {
         Product product = productService.get(pid);
         User user = (User) session.getAttribute("user");
-        List<OrderItem> ois = orderItemService.listByUser(user);
 
         Optional<OrderItem> optionalOrderItem = orderItemService.listByUser(user)
                 .stream()
@@ -203,5 +202,11 @@ public class ForeRESTController {
         return Result.success(map);
     }
 
-
+    @GetMapping("forecart")
+    public Object cart(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        List<OrderItem> orderItems = orderItemService.listByUser(user);
+        productImageService.setFirstProductImagesOnOrderItems(orderItems);
+        return orderItems;
+    }
 }
