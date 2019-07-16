@@ -1,6 +1,5 @@
 package com.example.tmall_springboot.interceptors;
 
-import antlr.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,8 +9,14 @@ import java.util.Arrays;
 
 public class LoginInterceptor implements HandlerInterceptor {
 
+    public static final String NO_INTERCEPTOR_PATH =".*/((css)|(js)|(img)).*";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        if (request.getServletPath().matches(NO_INTERCEPTOR_PATH)) {
+            return true;
+        }
 
         String[] AuthPages = new String[]{
                 "buy",
@@ -39,8 +44,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         };
 
         HttpSession session = request.getSession();
-        String contextPath = session.getServletContext().getContextPath();
-        String page = StringUtils.stripFront(request.getRequestURI(), contextPath + "/");
+        String page = request.getServletPath().substring(1);
 
         if (beginWith(page, AuthPages) && session.getAttribute("user") == null) {
             response.sendRedirect("login");

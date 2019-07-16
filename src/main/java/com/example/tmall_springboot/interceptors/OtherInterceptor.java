@@ -12,6 +12,8 @@ import javax.servlet.http.HttpSession;
 
 public class OtherInterceptor implements HandlerInterceptor {
 
+    public static final String NO_INTERCEPTOR_PATH =".*/((css)|(js)|(img)).*";
+
     private final CategoryService categoryService;
     private final OrderItemService orderItemService;
 
@@ -22,6 +24,10 @@ public class OtherInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,  ModelAndView modelAndView) throws Exception {
+
+        if (request.getServletPath().matches(NO_INTERCEPTOR_PATH)) {
+            return;
+        }
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
