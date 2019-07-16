@@ -110,7 +110,7 @@ public class ForeRESTController {
         productService.setSaleAndReviewNumber(c.getProducts());
         categoryService.removeCategoryFromProduct(c);
 
-        if (null  != sort) {
+        if (null != sort) {
             switch (sort) {
                 case "review":
                     Collections.sort(c.getProducts(), (p1, p2) -> p2.getReviewCount() - p1.getReviewCount());
@@ -208,5 +208,31 @@ public class ForeRESTController {
         List<OrderItem> orderItems = orderItemService.listByUser(user);
         productImageService.setFirstProductImagesOnOrderItems(orderItems);
         return orderItems;
+    }
+
+    @GetMapping("forechangeOrderItem")
+    public Object changeOrderItem(HttpSession session, Long pid, int num) {
+        User user = (User) session.getAttribute("user");
+        if(null == user) { return Result.fail("未登录"); }
+
+        orderItemService.listByUser(user)
+                .stream()
+                .filter(orderItem1 -> orderItem1.getProduct().getId().equals(pid))
+                .findAny()
+                .ifPresent(orderItem1 -> {
+                    orderItem1.setNumber(num);
+                    orderItemService.update(orderItem1);
+                });
+
+        return Result.success();
+    }
+
+    @GetMapping("foredeleteOrderItem")
+    public Object deleteOrderItem(HttpSession session,Long oiid){
+        User user = (User) session.getAttribute("user");
+        if (null == user) { return Result.fail("未登录"); }
+
+        orderItemService.delete(oiid);
+        return Result.success();
     }
 }
