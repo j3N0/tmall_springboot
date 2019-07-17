@@ -2,11 +2,13 @@ package com.example.tmall_springboot.controllers;
 
 import com.example.tmall_springboot.domains.*;
 import com.example.tmall_springboot.services.*;
+import com.example.tmall_springboot.utils.Commons;
 import com.example.tmall_springboot.utils.Result;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -19,15 +21,17 @@ public class ForeRESTController {
     private final PropertyValueService propertyValueService;
     private final ReviewService reviewService;
     private final OrderItemService orderItemService;
+    private final OrderService orderService;
     private final UserService userService;
 
-    public ForeRESTController(CategoryService categoryService, ProductService productService, ProductImageService productImageService, PropertyValueService propertyValueService, ReviewService reviewService, OrderItemService orderItemService, UserService userService) {
+    public ForeRESTController(CategoryService categoryService, ProductService productService, ProductImageService productImageService, PropertyValueService propertyValueService, ReviewService reviewService, OrderItemService orderItemService, OrderService orderService, UserService userService) {
         this.categoryService = categoryService;
         this.productService = productService;
         this.productImageService = productImageService;
         this.propertyValueService = propertyValueService;
         this.reviewService = reviewService;
         this.orderItemService = orderItemService;
+        this.orderService = orderService;
         this.userService = userService;
     }
 
@@ -234,5 +238,34 @@ public class ForeRESTController {
 
         orderItemService.delete(oiid);
         return Result.success();
+    }
+
+    @PostMapping("forecreateOrder")
+    public Object createOrder(@RequestBody Order order, HttpSession session){
+        User user = (User) session.getAttribute("user");
+        if (null == user) { return Result.fail("未登录"); }
+        String orderCode = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + Commons.RandomInt(10000);
+        order.setOrderCode(orderCode);
+        order.setCreateDate(new Date());
+        order.setUser(user);
+        order.setStatus(OrderService.waitPay);
+        List<OrderItem> orderItems = (List<OrderItem>) session.getAttribute("ois");
+
+        float total = orderService.add(order, orderItems);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("oid", order.getId());
+        map.put("total", total);
+
+        return Result.success(map);
+    }
+
+    @GetMapping("forepayed")
+    public Object payed(Long oid) {
+        Order order = orderService.get(oid);
+        order.setStatus(OrderService.waitDelivery);
+        order.setPayDate(new Date());
+        orderService.update(order);
+        return order;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.tmall_springboot.services;
 
 import com.example.tmall_springboot.domains.Order;
+import com.example.tmall_springboot.domains.OrderItem;
 
 import java.util.List;
 
@@ -16,6 +17,10 @@ public interface OrderService extends PageService<Order> {
     void removeOrderFromOrderItem(List<Order> orders);
 
     Order get(Long oid);
+
+    Order add(Order order);
+
+    float add(Order order, List<OrderItem> orderItems);
 
     Order update(Order order);
 
