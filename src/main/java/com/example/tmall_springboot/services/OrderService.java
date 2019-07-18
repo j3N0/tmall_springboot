@@ -2,6 +2,7 @@ package com.example.tmall_springboot.services;
 
 import com.example.tmall_springboot.domains.Order;
 import com.example.tmall_springboot.domains.OrderItem;
+import com.example.tmall_springboot.domains.User;
 
 import java.util.List;
 
@@ -24,4 +25,5 @@ public interface OrderService extends PageService<Order> {
 
     Order update(Order order);
 
+    List<Order> listByUserWithoutDelete(User user);
 }

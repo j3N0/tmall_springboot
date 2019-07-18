@@ -2,8 +2,9 @@ package com.example.tmall_springboot.services.jpa;
 
 import com.example.tmall_springboot.domains.Order;
 import com.example.tmall_springboot.domains.OrderItem;
-import com.example.tmall_springboot.repositories.OrderItemRepository;
+import com.example.tmall_springboot.domains.User;
 import com.example.tmall_springboot.repositories.OrderRepository;
+import com.example.tmall_springboot.services.OrderItemService;
 import com.example.tmall_springboot.services.OrderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,11 +20,11 @@ import java.util.List;
 public class OrderJpaService implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
+    private final OrderItemService orderItemService;
 
-    public OrderJpaService(OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
+    public OrderJpaService(OrderRepository orderRepository, OrderItemService orderItemService) {
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
+        this.orderItemService = orderItemService;
     }
 
     @Override
@@ -56,10 +57,17 @@ public class OrderJpaService implements OrderService {
                 .stream()
                 .map(orderItem -> {
                     orderItem.setOrder(order);              //update
-                    orderItemRepository.save(orderItem);
+                    orderItemService.update(orderItem);
                     return orderItem.getProduct().getPromotePrice() * orderItem.getNumber();
                 })
                 .reduce(0f, Float::sum);
+    }
+
+    @Override
+    public List<Order> listByUserWithoutDelete(User user) {
+        List<Order> orders = orderRepository.findByUserAndStatusNotOrderByIdDesc(user, OrderService.delete);
+        orderItemService.fill(orders);
+        return orders;
     }
 
     @Override
