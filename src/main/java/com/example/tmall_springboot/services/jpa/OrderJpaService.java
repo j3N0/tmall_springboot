@@ -32,7 +32,8 @@ public class OrderJpaService implements OrderService {
         orders.forEach(this::removeOrderFromOrderItem);
     }
 
-    private void removeOrderFromOrderItem(Order order) {
+    @Override
+    public void removeOrderFromOrderItem(Order order) {
         order.getOrderItems().forEach(orderItem -> orderItem.setOrder(null));
     }
 

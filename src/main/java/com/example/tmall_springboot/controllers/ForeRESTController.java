@@ -277,4 +277,29 @@ public class ForeRESTController {
         orderService.removeOrderFromOrderItem(orders);
         return orders;
     }
+
+    @GetMapping("foreconfirmPay")
+    public Order confirmPay(Long oid) {
+        Order order = orderService.get(oid);
+        orderItemService.fill(order);
+        orderService.removeOrderFromOrderItem(order);
+        return order;
+    }
+
+    @GetMapping("foreorderConfirmed")
+    public Object orderConfirmed(Long oid) {
+        Order order = orderService.get(oid);
+        order.setStatus(OrderService.waitReview);
+        order.setConfirmDate(new Date());
+        orderService.update(order);
+        return Result.success();
+    }
+
+    @PutMapping("foredeleteOrder")
+    public Object deleteOrder(Long oid){
+        Order order = orderService.get(oid);
+        order.setStatus(OrderService.delete);
+        orderService.update(order);
+        return Result.success();
+    }
 }

@@ -17,6 +17,8 @@ public interface OrderService extends PageService<Order> {
 
     void removeOrderFromOrderItem(List<Order> orders);
 
+    void removeOrderFromOrderItem(Order order);
+
     Order get(Long oid);
 
     Order add(Order order);
