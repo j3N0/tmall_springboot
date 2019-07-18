@@ -27,8 +27,6 @@ public class OtherInterceptor implements HandlerInterceptor {
 
         if (request.getServletPath().matches(NO_INTERCEPTOR_PATH)) {
             return;
-        } else {
-            System.out.println("Other" + request.getServletPath());
         }
 
         HttpSession session = request.getSession();
