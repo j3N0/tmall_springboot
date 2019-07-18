@@ -16,8 +16,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         if (request.getServletPath().matches(NO_INTERCEPTOR_PATH)) {
             return true;
-        } else {
-            System.out.println("Login" + request.getServletPath());
         }
 
         String[] AuthPages = new String[]{
