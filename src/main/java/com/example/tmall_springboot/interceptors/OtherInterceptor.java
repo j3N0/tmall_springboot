@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 
 public class OtherInterceptor implements HandlerInterceptor {
 
-    public static final String NO_INTERCEPTOR_PATH =".*/((css)|(js)|(img)).*";
+    public static final String NO_INTERCEPTOR_PATH =".*/((css)|(webjars)|(img)).*";
 
     private final CategoryService categoryService;
     private final OrderItemService orderItemService;
@@ -27,6 +27,8 @@ public class OtherInterceptor implements HandlerInterceptor {
 
         if (request.getServletPath().matches(NO_INTERCEPTOR_PATH)) {
             return;
+        } else {
+            System.out.println("Other" + request.getServletPath());
         }
 
         HttpSession session = request.getSession();

@@ -9,13 +9,15 @@ import java.util.Arrays;
 
 public class LoginInterceptor implements HandlerInterceptor {
 
-    public static final String NO_INTERCEPTOR_PATH =".*/((css)|(js)|(img)).*";
+    public static final String NO_INTERCEPTOR_PATH =".*/((css)|(webjars)|(img)).*";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         if (request.getServletPath().matches(NO_INTERCEPTOR_PATH)) {
             return true;
+        } else {
+            System.out.println("Login" + request.getServletPath());
         }
 
         String[] AuthPages = new String[]{
