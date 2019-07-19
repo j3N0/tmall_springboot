@@ -57,7 +57,7 @@ public class ProductJpaService implements ProductService {
     @Override
     @Cacheable(key = "'products-one-'+ #p0")
     public Product get(Long id) {
-        return productRepository.getOne(id);
+        return productRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     @Override
