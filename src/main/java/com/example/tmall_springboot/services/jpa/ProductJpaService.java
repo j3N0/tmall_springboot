@@ -9,6 +9,10 @@ import com.example.tmall_springboot.services.ProductImageService;
 import com.example.tmall_springboot.services.ProductService;
 import com.example.tmall_springboot.services.ReviewService;
 import com.example.tmall_springboot.utils.Page4Navigator;
+import com.example.tmall_springboot.utils.SpringContextUtil;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,6 +25,7 @@ import java.util.stream.Collectors;
 import static com.example.tmall_springboot.config.Const.NAVIGATE_PAGES;
 
 @Service
+@CacheConfig(cacheNames = "products")
 public class ProductJpaService implements ProductService {
 
     private final ProductRepository productRepository;
@@ -38,26 +43,31 @@ public class ProductJpaService implements ProductService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public Product add(Product product) {
         return productRepository.save(product);
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public void delete(Long id) {
         productRepository.deleteById(id);
     }
 
     @Override
+    @Cacheable(key = "'products-one-'+ #p0")
     public Product get(Long id) {
         return productRepository.getOne(id);
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public Product update(Product product) {
         return productRepository.save(product);
     }
 
     @Override
+    @Cacheable(key = "'products-cid-' + #p0.id")
     public List<Product> listByCategory(Category category) {
         return productRepository.findByCategoryOrderById(category);
     }
@@ -69,7 +79,8 @@ public class ProductJpaService implements ProductService {
 
     @Override
     public void fill(Category category) {
-        List<Product> products = listByCategory(category);
+        ProductService productService = SpringContextUtil.getBean(ProductService.class);        //deal with AOP
+        List<Product> products = productService.listByCategory(category);
         productImageService.setFirstProductImages(products);
         category.setProducts(products);
     }
@@ -107,6 +118,7 @@ public class ProductJpaService implements ProductService {
     }
 
     @Override
+    @Cacheable(key = "'products-cid-' + #p0 + '-page-' + #p1 + '-' + #p2 ")
     public Page4Navigator<Product> pageFromJpa(Long key, int start, int size) {
 
         Sort sort = new Sort(Sort.Direction.DESC, "id");
