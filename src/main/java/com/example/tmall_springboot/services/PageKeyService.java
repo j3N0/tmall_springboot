@@ -1,8 +1,8 @@
 package com.example.tmall_springboot.services;
 
-import org.springframework.data.domain.Page;
+import com.example.tmall_springboot.utils.Page4Navigator;
 
 public interface PageKeyService<T> {
 
-    Page<T> pageFromJpa(Long key, int start, int size);
+    Page4Navigator<T> pageFromJpa(Long key, int start, int size);
 }

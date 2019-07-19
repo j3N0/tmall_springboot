@@ -4,7 +4,6 @@ import com.example.tmall_springboot.domains.Category;
 import com.example.tmall_springboot.services.CategoryService;
 import com.example.tmall_springboot.utils.ImageUtil;
 import com.example.tmall_springboot.utils.Page4Navigator;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +16,6 @@ import java.io.IOException;
 @RestController
 public class CategoryController {
 
-    public static final int NAVIGATE_PAGES = 5;
     private final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService) {
@@ -28,9 +26,7 @@ public class CategoryController {
     public Page4Navigator<Category> listCategories(@RequestParam(value = "start", defaultValue = "0") int start,
                                                    @RequestParam(value = "size", defaultValue = "5") int size) {
         start = start < 0 ? 0 : start;
-        Page<Category> page = categoryService.pageFromJpa(start, size);
-
-        return new Page4Navigator<>(page, NAVIGATE_PAGES);
+        return categoryService.pageFromJpa(start, size);
     }
 
     @PostMapping("/categories")

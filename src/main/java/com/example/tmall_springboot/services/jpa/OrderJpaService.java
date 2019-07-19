@@ -6,7 +6,7 @@ import com.example.tmall_springboot.domains.User;
 import com.example.tmall_springboot.repositories.OrderRepository;
 import com.example.tmall_springboot.services.OrderItemService;
 import com.example.tmall_springboot.services.OrderService;
-import org.springframework.data.domain.Page;
+import com.example.tmall_springboot.utils.Page4Navigator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.example.tmall_springboot.config.Const.NAVIGATE_PAGES;
 
 @Service
 public class OrderJpaService implements OrderService {
@@ -77,9 +79,9 @@ public class OrderJpaService implements OrderService {
     }
 
     @Override
-    public Page<Order> pageFromJpa(int start, int size) {
+    public Page4Navigator<Order> pageFromJpa(int start, int size) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(start, size, sort);
-        return orderRepository.findAll(pageable);
+        return new Page4Navigator<>(orderRepository.findAll(pageable), NAVIGATE_PAGES);
     }
 }

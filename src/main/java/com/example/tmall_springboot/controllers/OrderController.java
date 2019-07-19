@@ -5,7 +5,6 @@ import com.example.tmall_springboot.services.OrderItemService;
 import com.example.tmall_springboot.services.OrderService;
 import com.example.tmall_springboot.utils.Page4Navigator;
 import com.example.tmall_springboot.utils.Result;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -14,7 +13,6 @@ import java.util.Date;
 @RestController
 public class OrderController {
 
-    private static final int NAVIGATE_PAGES = 5;
     private final OrderService orderService;
     private final OrderItemService orderItemService;
 
@@ -27,10 +25,10 @@ public class OrderController {
     public Page4Navigator<Order> list(@RequestParam(value = "start", defaultValue = "0") int start,
                                       @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
         start = start < 0 ? 0 : start;
-        Page<Order> page = orderService.pageFromJpa(start, size);
+        Page4Navigator<Order> page = orderService.pageFromJpa(start, size);
         orderItemService.fill(page.getContent());
         orderService.removeOrderFromOrderItem(page.getContent());
-        return new Page4Navigator<>(page, NAVIGATE_PAGES);
+        return page;
     }
 
     @PutMapping("deliveryOrder/{oid}")

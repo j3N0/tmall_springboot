@@ -12,8 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Page4Navigator<T> {
 
-    Page<T> pageFromJPA;
-
     int navigatePages;
 
     int totalPages;
@@ -28,21 +26,19 @@ public class Page4Navigator<T> {
 
     List<T> content;
 
-    boolean isHasContent;
+    boolean hasContent;
 
     boolean first;
 
     boolean last;
 
-    boolean isHasNext;
+    boolean hasNext;
 
-    boolean isHasPrevious;
+    boolean hasPrevious;
 
     int[] navigatePageNums;
 
     public Page4Navigator(Page<T> pageFromJPA, int navigatePages) {
-
-        this.pageFromJPA = pageFromJPA;
 
         this.navigatePages = navigatePages;
 
@@ -58,15 +54,15 @@ public class Page4Navigator<T> {
 
         content = pageFromJPA.getContent();
 
-        isHasContent = pageFromJPA.hasContent();
+        hasContent = pageFromJPA.hasContent();
 
         first = pageFromJPA.isFirst();
 
         last = pageFromJPA.isLast();
 
-        isHasNext = pageFromJPA.hasNext();
+        hasNext = pageFromJPA.hasNext();
 
-        isHasPrevious  = pageFromJPA.hasPrevious();
+        hasPrevious = pageFromJPA.hasPrevious();
 
         calcNavigatepageNums();
 

@@ -1,19 +1,20 @@
 package com.example.tmall_springboot.services.jpa;
 
-
 import com.example.tmall_springboot.domains.Category;
 import com.example.tmall_springboot.repositories.CategoryRepository;
 import com.example.tmall_springboot.services.CategoryService;
+import com.example.tmall_springboot.utils.Page4Navigator;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.example.tmall_springboot.config.Const.NAVIGATE_PAGES;
 
 @Service
 @CacheConfig(cacheNames = "categories")
@@ -33,12 +34,12 @@ public class CategoryJpaService implements CategoryService {
     }
 
     @Override
-    //@Cacheable(key = "'categories-page-' + #p0 + '-' + #p1")
-    public Page<Category> pageFromJpa(int start, int size) {
+    @Cacheable(key = "'categories-page-' + #p0 + '-' + #p1")
+    public Page4Navigator<Category> pageFromJpa(int start, int size) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(start, size, sort);
 
-        return categoryRepository.findAll(pageable);
+        return new Page4Navigator<>(categoryRepository.findAll(pageable), NAVIGATE_PAGES);
     }
 
     @Override

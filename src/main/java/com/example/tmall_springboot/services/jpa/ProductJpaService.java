@@ -8,7 +8,7 @@ import com.example.tmall_springboot.services.OrderItemService;
 import com.example.tmall_springboot.services.ProductImageService;
 import com.example.tmall_springboot.services.ProductService;
 import com.example.tmall_springboot.services.ReviewService;
-import org.springframework.data.domain.Page;
+import com.example.tmall_springboot.utils.Page4Navigator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.tmall_springboot.config.Const.NAVIGATE_PAGES;
 
 @Service
 public class ProductJpaService implements ProductService {
@@ -105,13 +107,13 @@ public class ProductJpaService implements ProductService {
     }
 
     @Override
-    public Page<Product> pageFromJpa(Long key, int start, int size) {
+    public Page4Navigator<Product> pageFromJpa(Long key, int start, int size) {
 
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(start, size, sort);
         Category category = categoryRepository.getOne(key);
 
-        return productRepository.findByCategory(category, pageable);
+        return new Page4Navigator<>(productRepository.findByCategory(category, pageable), NAVIGATE_PAGES);
     }
 
     @Override

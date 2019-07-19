@@ -4,7 +4,6 @@ import com.example.tmall_springboot.domains.Product;
 import com.example.tmall_springboot.services.ProductImageService;
 import com.example.tmall_springboot.services.ProductService;
 import com.example.tmall_springboot.utils.Page4Navigator;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -12,7 +11,6 @@ import java.util.Date;
 @RestController
 public class ProductController {
 
-    private static final int NAVIGATE_PAGES = 5;
     private final ProductService productService;
     private final ProductImageService productImageService;
 
@@ -26,10 +24,10 @@ public class ProductController {
                                         @RequestParam(value = "start", defaultValue = "0") int start,
                                         @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
         start = start < 0 ? 0 : start;
-        Page<Product> page = productService.pageFromJpa(cid, start, size);
+        Page4Navigator<Product> page = productService.pageFromJpa(cid, start, size);
 
         productImageService.setFirstProductImages(page.getContent());
-        return new Page4Navigator<>(page, NAVIGATE_PAGES);
+        return page;
     }
 
     @GetMapping("/products/{id}")

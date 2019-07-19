@@ -5,13 +5,15 @@ import com.example.tmall_springboot.domains.Property;
 import com.example.tmall_springboot.repositories.CategoryRepository;
 import com.example.tmall_springboot.repositories.PropertyRepository;
 import com.example.tmall_springboot.services.PropertyService;
-import org.springframework.data.domain.Page;
+import com.example.tmall_springboot.utils.Page4Navigator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.example.tmall_springboot.config.Const.NAVIGATE_PAGES;
 
 
 @Service
@@ -46,12 +48,12 @@ public class PropertyJpaService implements PropertyService {
     }
 
     @Override
-    public Page<Property> pageFromJpa(Long cid, int start, int size) {
+    public Page4Navigator<Property> pageFromJpa(Long cid, int start, int size) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(start, size, sort);
         Category category = categoryRepository.getOne(cid);
 
-        return propertyRepository.findByCategory(category, pageable);
+        return new Page4Navigator<>(propertyRepository.findByCategory(category, pageable), NAVIGATE_PAGES);
     }
 
     @Override

@@ -3,13 +3,11 @@ package com.example.tmall_springboot.controllers;
 import com.example.tmall_springboot.domains.Property;
 import com.example.tmall_springboot.services.PropertyService;
 import com.example.tmall_springboot.utils.Page4Navigator;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class PropertyController {
 
-    private static final int NAVIGATE_PAGES = 5;
     private final PropertyService propertyService;
 
     public PropertyController(PropertyService propertyService) {
@@ -20,9 +18,7 @@ public class PropertyController {
     public Page4Navigator<Property> list(@PathVariable Long cid, @RequestParam(value = "start", defaultValue = "0") int start,
                                          @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
         start = start < 0 ? 0 : start;
-        Page<Property> page = propertyService.pageFromJpa(cid, start, size);
-
-        return new Page4Navigator<>(page, NAVIGATE_PAGES);
+        return propertyService.pageFromJpa(cid, start, size);
     }
 
     @GetMapping("/properties/{id}")
