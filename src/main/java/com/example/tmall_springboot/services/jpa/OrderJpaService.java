@@ -7,6 +7,9 @@ import com.example.tmall_springboot.repositories.OrderRepository;
 import com.example.tmall_springboot.services.OrderItemService;
 import com.example.tmall_springboot.services.OrderService;
 import com.example.tmall_springboot.utils.Page4Navigator;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +22,7 @@ import java.util.List;
 import static com.example.tmall_springboot.config.Const.NAVIGATE_PAGES;
 
 @Service
+@CacheConfig(cacheNames = "orders")
 public class OrderJpaService implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -40,18 +44,21 @@ public class OrderJpaService implements OrderService {
     }
 
     @Override
+    @Cacheable(key = "'orders-one-' + #p0")
     public Order get(Long oid) {
-        return orderRepository.getOne(oid);
+        return orderRepository.findById(oid).orElseThrow(RuntimeException::new);
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public Order add(Order order) {
         return orderRepository.save(order);
     }
 
 
     @Override
-    @Transactional(propagation= Propagation.REQUIRED, rollbackForClassName="Exception")
+    @CacheEvict(allEntries = true)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackForClassName = "Exception")
     public float add(Order order, List<OrderItem> orderItems) {
 
         add(order);
@@ -67,6 +74,7 @@ public class OrderJpaService implements OrderService {
     }
 
     @Override
+    @Cacheable(key = "'orders-uid-' + #p0.id")
     public List<Order> listByUserWithoutDelete(User user) {
         List<Order> orders = orderRepository.findByUserAndStatusNotOrderByIdDesc(user, OrderService.delete);
         orderItemService.fill(orders);
@@ -74,11 +82,13 @@ public class OrderJpaService implements OrderService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public Order update(Order order) {
         return orderRepository.save(order);
     }
 
     @Override
+    @Cacheable(key = "'orders-page-' + #p0+ '-' + #p1")
     public Page4Navigator<Order> pageFromJpa(int start, int size) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(start, size, sort);
