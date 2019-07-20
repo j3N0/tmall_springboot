@@ -57,7 +57,7 @@ public class CategoryJpaService implements CategoryService {
     @Override
     @Cacheable(key = "'categories-one-' + #p0")
     public Category get(Long id) {
-        return categoryRepository.getOne(id);
+        return categoryRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     @Override
